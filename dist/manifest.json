@@ -1,0 +1,30 @@
+[
+  {
+    "game": "heroes-rng",
+    "universeId": 10153098880,
+    "placeId": 108307565942574,
+    "version": "1.0.0",
+    "script": "games/heroes-rng/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "dungeon-quest-reborn",
+    "universeId": 9931749389,
+    "placeId": 85776757589518,
+    "version": "0.4.0",
+    "script": "games/dungeon-quest-reborn/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "gakuran",
+    "universeId": 9199655655,
+    "placeId": 128736949265057,
+    "version": "0.1.0",
+    "script": "games/gakuran/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "heavy-fishing",
+    "universeId": 8342498724,
+    "placeId": 98502499119821,
+    "version": "0.29.1",
+    "script": "games/heavy-fishing/dist/hub-single-obf.luau"
+  }
+]
