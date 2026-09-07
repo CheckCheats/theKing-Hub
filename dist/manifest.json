@@ -33,6 +33,13 @@
     "script": "games/gakuran/dist/hub-single-obf.luau"
   },
   {
+    "game": "grand-blue",
+    "universeId": 6215986499,
+    "placeId": 118635363908336,
+    "version": "0.7.1",
+    "script": "games/grand-blue/dist/hub-single-obf.luau"
+  },
+  {
     "game": "heavy-fishing",
     "universeId": 8342498724,
     "placeId": 98502499119821,
