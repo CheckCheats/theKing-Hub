@@ -10,7 +10,7 @@ TheKing Publish v1.2 — RCWTK 一键发布: build → 混淆(v1.4) → 白名�
   4. 生成 dist/manifest.json (游戏清单, Loader 路由用)
   5. (--loader) Loader 单文件化 + 混淆 -> dist/theking-loader.luau
 
-仓库: https://gitee.com/CheckCheat/the-king-hub (master)
+仓库: Gitee CheckCheat/the-king-hub + GitHub CheckCheats/theKing-Hub (均为 master, --push 双路覆盖)
 
 用法:
     python tools/publish.py --loader                # 构建 Loader 单文件
@@ -23,6 +23,7 @@ TheKing Publish v1.2 — RCWTK 一键发布: build → 混淆(v1.4) → 白名�
 
 import json
 import random
+import subprocess
 import sys
 from pathlib import Path
 
@@ -34,7 +35,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import build as build_mod
 import obfuscate as obf
-from repo_config import REPO_BRANCH, REPO_HTTPS, GITEE_CHECKOUT
+from repo_config import REPO_BRANCH, REPO_HTTPS, GITHUB_HTTPS, GITHUB_BRANCH, GITHUB_ROOT
 import whitelist as wl
 
 # ==================== 白名单 (逻辑在 tools/whitelist.py, 这里只用其接口) ====================
@@ -124,10 +125,12 @@ def publish_game(game_dir: Path, use_weather: bool, skip_archive: bool = False):
 # 与 Loader EN_SORT 一致: 清单按英文名 A-Z
 EN_SORT = {
     "clean-the-world": "Clean the WORLD",
+    "cultivation-evermortal": "Cultivation: Evermortal",
     "dungeon-quest-reborn": "Dungeon Quest Reborn",
     "dungeon-raiders": "Dungeon Raiders",
     "fisch": "Fisch",
     "gakuran": "Gakuran",
+    "grand-blue": "Grand Blue",
     "heavy-fishing": "Heavy Fishing",
     "heroes-rng": "Heroes RNG",
     "project-aura-rng": "Project Aura RNG",
@@ -159,52 +162,90 @@ def merge_manifest(entries, out_path: Path):
     print(f"[publish] manifest 更新: {out_path} ({len(ordered)} 游戏, 英文名 A-Z)")
 
 
-def sync_and_push(skip_class_archive: bool = False):
-    """把 dist/ 与 games/*/dist 产物同步进 Gitee 检出目录并推送 (一键上传)。"""
-    import subprocess
-    co = wl.ensure_checkout()
-    files = [
-        (ROOT / "dist" / "manifest.json", co / "dist" / "manifest.json"),
-        (ROOT / "dist" / "theking-loader.luau", co / "dist" / "theking-loader.luau"),
-        (ROOT / "dist" / "run-loader-one-liner.luau", co / "dist" / "run-loader-one-liner.luau"),
-        (ROOT / "windui-dist" / "main.lua", co / "windui-dist" / "main.lua"),
-        (ROOT / "lib" / "vendor" / "rayfield-gen2.lua", co / "lib" / "vendor" / "rayfield-gen2.lua"),
-        (ROOT / "lib" / "assets" / "theking-mark.png", co / "lib" / "assets" / "theking-mark.png"),
-        (ROOT / "lib" / "assets" / "theking-mark.b64", co / "lib" / "assets" / "theking-mark.b64"),
+def iter_publish_files():
+    """(源文件, 相对仓库路径) — Gitee / GitHub 同一套产物覆盖写入。"""
+    pairs = [
+        (ROOT / "dist" / "users.enc", Path("dist/users.enc")),
+        (ROOT / "dist" / "manifest.json", Path("dist/manifest.json")),
+        (ROOT / "dist" / "theking-loader.luau", Path("dist/theking-loader.luau")),
+        (ROOT / "dist" / "run-loader-one-liner.luau", Path("dist/run-loader-one-liner.luau")),
+        (ROOT / "windui-dist" / "main.lua", Path("windui-dist/main.lua")),
+        (ROOT / "lib" / "vendor" / "rayfield-gen2.lua", Path("lib/vendor/rayfield-gen2.lua")),
+        (ROOT / "lib" / "assets" / "theking-mark.png", Path("lib/assets/theking-mark.png")),
+        (ROOT / "lib" / "assets" / "theking-mark.b64", Path("lib/assets/theking-mark.b64")),
     ]
     for g in sorted((ROOT / "games").iterdir()):
         if not g.is_dir():
             continue
         obf = g / "dist" / "hub-single-obf.luau"
         if obf.exists():
-            files.append((obf, co / "games" / g.name / "dist" / "hub-single-obf.luau"))
-        archive = g / "dist" / "class-archive.luau"
-        if archive.exists():
-            print(f"[publish] 不推 sidecar 职业档案: {g.name}/dist/class-archive.luau")
-    for src, dst in files:
-        if not src.exists():
-            print(f"[publish] 跳过缺失文件: {src}")
-            continue
-        dst.parent.mkdir(parents=True, exist_ok=True)
-        dst.write_bytes(src.read_bytes())
-    subprocess.run(["git", "-C", str(co), "add", "-A"], check=True)
-    st = subprocess.run(["git", "-C", str(co), "status", "--short"], capture_output=True, text=True).stdout
-    if not st.strip():
-        print("[publish] 检出目录无变更, 跳过提交")
-        return
-    # 绕开本机坏掉的图形凭据选择器: 清空 helper 链 + URL 内联凭据
-    subprocess.run(["git", "-C", str(co), "-c", "credential.helper=", "commit", "-m",
-                    "publish: 发布更新 (loader+games)"], check=True)
-    # gitconfig 写死 127.0.0.1:7897; 该口常关。7891 非可用 HTTPS 代理。
-    # 推送时清空代理走直连; 7897 起来后再改回 http://127.0.0.1:7897
-    subprocess.run([
+            pairs.append((obf, Path("games") / g.name / "dist" / "hub-single-obf.luau"))
+    return pairs
+
+
+def _git_no_proxy(co: Path, args: list, check: bool = True, capture: bool = False):
+    cmd = [
         "git", "-C", str(co),
         "-c", "credential.helper=",
         "-c", "http.proxy=",
         "-c", "https.proxy=",
-        "push", wl.gitee_url_with_creds(), REPO_BRANCH,
-    ], check=True)
-    print(f"[publish] 已推送 {REPO_HTTPS} (branch: {REPO_BRANCH})")
+        *args,
+    ]
+    return subprocess.run(cmd, check=check, capture_output=capture, text=capture)
+
+
+def copy_publish_into(dest_root: Path):
+    """覆盖写入 (替换旧混淆包, 不留双份)。"""
+    copied = 0
+    for src, rel in iter_publish_files():
+        if not src.exists():
+            print(f"[publish] 跳过缺失文件: {src}")
+            continue
+        dst = dest_root / rel
+        if src.resolve() == dst.resolve():
+            copied += 1
+            continue
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(src.read_bytes())
+        copied += 1
+    return copied
+
+
+def _commit_relpaths(co: Path, rels: list, message: str) -> bool:
+    rels = [str(r).replace("\\", "/") for r in rels]
+    if not rels:
+        return False
+    _git_no_proxy(co, ["add", "-f", "--", *rels], check=True)
+    st = _git_no_proxy(co, ["status", "--short", "--", *rels], check=True, capture=True)
+    out = (st.stdout or "").strip()
+    if not out:
+        print(f"[publish] {co.name or 'github'} 产物无变更")
+        return False
+    _git_no_proxy(co, ["commit", "-m", message], check=True)
+    return True
+
+
+def sync_and_push(skip_class_archive: bool = False):
+    """产物覆盖进 Gitee 检出 + 本仓 GitHub, 两条都推 master。"""
+    rels = [rel for src, rel in iter_publish_files() if src.exists()]
+    msg = "publish: 替换混淆产物 (loader+games)"
+
+    co = wl.ensure_checkout()
+    n = copy_publish_into(co)
+    print(f"[publish] Gitee 检出已覆盖 {n} 个文件")
+    if _commit_relpaths(co, rels, msg):
+        _git_no_proxy(co, ["push", wl.gitee_url_with_creds(), REPO_BRANCH], check=True)
+        print(f"[publish] 已推 Gitee {REPO_HTTPS} ({REPO_BRANCH})")
+    else:
+        print("[publish] Gitee 跳过推送")
+
+    print(f"[publish] GitHub 路径即本仓, 覆盖 {copy_publish_into(GITHUB_ROOT)} 个文件")
+    if _commit_relpaths(GITHUB_ROOT, rels, msg):
+        _git_no_proxy(GITHUB_ROOT, ["push", "origin", GITHUB_BRANCH], check=True)
+        print(f"[publish] 已推 GitHub {GITHUB_HTTPS} ({GITHUB_BRANCH})")
+    else:
+        print("[publish] GitHub 跳过推送")
+    _ = skip_class_archive
 
 
 def main():
@@ -215,7 +256,7 @@ def main():
     ap.add_argument("--loader", action="store_true", help="构建 Loader 单文件 (含混淆)")
     ap.add_argument("--no-class-archive", action="store_true", help="不内嵌、不推送 class-archive.luau")
     ap.add_argument("--no-weather", action="store_true", help="关闭天气API播种 (调试用)")
-    ap.add_argument("--push", action="store_true", help="构建后一键推送到 Gitee 检出目录")
+    ap.add_argument("--push", action="store_true", help="构建后覆盖推送到 Gitee 与 GitHub (master)")
     args = ap.parse_args()
 
     use_weather = not args.no_weather
@@ -256,7 +297,7 @@ def main():
     if entries2:
         merge_manifest(entries2, dist_dir / "manifest.json")
 
-    print(f"\n[publish] 完成。上传到 {REPO_HTTPS} (branch: {REPO_BRANCH}):")
+    print(f"\n[publish] 完成。--push 会覆盖推送 Gitee + GitHub (均为 master):")
     print(f"  dist/theking-loader.luau   (仅 --loader 时)")
     print(f"  dist/manifest.json         (游戏清单)")
     for e in entries2:

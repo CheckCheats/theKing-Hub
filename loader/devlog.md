@@ -5,6 +5,30 @@
 
 ---
 
+## [2026-09-07 | v0.9.4 → v0.9.5] Cultivation: Evermortal（修炼：永恒不朽）
+
+清单 `CN_GAME` / `EN_SORT` 加入 `cultivation-evermortal`。显示 `Cultivation: Evermortal（修炼：永恒不朽）`。universeId `10667860714` placeId `96179204081384`。需 `publish.py --game cultivation-evermortal --no-class-archive --loader --push` 才进远程清单。
+
+---
+
+## [2026-09-07 | v0.9.3 → v0.9.4] Grand Blue（大蓝色）
+
+清单 `CN_GAME` / `EN_SORT` 加入 `grand-blue`。显示 `Grand Blue（大蓝色）`。universeId `6215986499` placeId `118635363908336`。需 `publish.py --game grand-blue --loader --push` 才进远程清单。
+
+---
+
+## [2026-09-07 | v0.9.2 → v0.9.3] GitHub 灾备走 master + 发布双路覆盖
+
+Loader 拉 GitHub 时分支从 `main` 改成 `master` (仓库实际分支)。`publish.py --push` 把混淆产物覆盖写入 Gitee 检出和本仓 GitHub, `git add -f` 打进被 ignore 的 `games/*/dist/*-obf.luau`。
+
+---
+
+## [2026-09-07 | v0.9.1 → v0.9.2] 清单英文在前
+
+显示名统一 `English（中文）`; 无中文名的 Fisch 仍只显示英文。排序仍走 EN_SORT, 不受括号位置影响。
+
+---
+
 ## [2026-09-07 | v0.9.0 → v0.9.1] 英文名排序 + Project Aura RNG
 
 ### 目标

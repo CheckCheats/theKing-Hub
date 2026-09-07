@@ -1,14 +1,21 @@
 # TheKing Loader — Hub 分发引擎使用手册
 
-> 版本: Loader v0.4.0 (加载动画) | Obfuscator v1.4 | 更新时间: 2026-09-01
-> 仓库: https://github.com/CheckCheats/theKing-Hub
+> 版本: Loader v0.9.5 | Obfuscator v1.4 | 更新时间: 2026-09-07
+> 主源: https://gitee.com/CheckCheat/the-king-hub (master)
+> 灾备: https://github.com/CheckCheats/theKing-Hub (master)
 
 ## 一、单行执行 (最快上手)
 
 在任意 Roblox 注入器(如 Real)中执行这一行:
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/CheckCheats/theKing-Hub/main/dist/theking-loader.luau"))()
+loadstring(game:HttpGet("https://gitee.com/CheckCheat/the-king-hub/raw/master/dist/theking-loader.luau"))()
+```
+
+GitHub 灾备:
+
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/CheckCheats/theKing-Hub/master/dist/theking-loader.luau"))()
 ```
 
 **要求**: 当前 Roblox 用户名必须在白名单内 (当前仅 @WoSh1N1D1e)。
@@ -56,12 +63,12 @@ WoSh1N1D1e
 ## 三-b、发布与上传 (一次命令)
 
 ```bash
-python tools/publish.py --loader --all    # 构建 Loader 单文件 + 发布全部游戏 (天气播种)
-python tools/publish.py --no-weather      # 调试用: 关天气播种
+python tools/publish.py --loader --all --push   # 构建 + 覆盖推 Gitee 与 GitHub (均为 master)
+python tools/publish.py --no-weather            # 调试用: 关天气播种
 ```
 
-上传: `git add -A && git commit -m "..." && git push origin main --force`
-仓库: https://github.com/CheckCheats/theKing-Hub (main)
+不要 `git push --force`。产物用覆盖写入 + `git add -f` 打进 `games/*/dist/*-obf.luau`。
+仓库: Gitee `CheckCheat/the-king-hub` (主) / GitHub `CheckCheats/theKing-Hub` (灾备), 分支都是 master。
 
 ## 四、发布流程 (每次更新脚本/白名单)
 

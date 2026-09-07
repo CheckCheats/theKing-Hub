@@ -11,6 +11,7 @@ docs/patterns/
 ├── fishing.md         ← 钓鱼类 (heavy-fishing, fisch)
 ├── dungeon.md         ← 地牢类 (dungeon-raiders, dungeon-quest-reborn)
 ├── rng.md             ← RNG 类 (heroes-rng, project-aura-rng)
+├── cultivation.md     ← 修仙聚气类 (cultivation-evermortal; 仅 1 档, 待第 2 个验证)
 └── <genre>.md         ← 同类型第 2 个游戏出现时新建
 ```
 
