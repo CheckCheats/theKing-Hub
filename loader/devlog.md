@@ -5,6 +5,21 @@
 
 ---
 
+## [2026-09-07 | v0.9.0 → v0.9.1] 英文名排序 + Project Aura RNG
+
+### 目标
+清单按英文名 A-Z; Loader/publish 能路由新游戏 project-aura-rng。
+
+### 改动
+- `EN_SORT` + `sortManifest`: 拉清单后、画列表前都按英文名排序
+- `CN_GAME` 加「（项目光环）Project Aura RNG」
+- `publish.py merge_manifest` 同样 A-Z; `dist/manifest.json` 写入该游戏 universeId/placeId/v0.2.0
+
+### 遗留
+- 混淆包 `games/project-aura-rng/dist/hub-single-obf.luau` 需 `python tools/publish.py --game project-aura-rng --loader` 才会有; 没包时点注入会拉失败回 Loader
+
+---
+
 ## [2026-09-04 | v0.8.4 → v0.9.0] 自动注入 + 持久化
 
 - 主界面当前游戏卡增加「自动注入 开/关」, `writefile` 落到 `theking-loader/prefs.txt` (失败再试根目录 `theking-loader-prefs.txt`)

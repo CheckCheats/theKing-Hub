@@ -1,5 +1,5 @@
 --[[
-    TheKing Loader [0.9.0]
+    TheKing Loader [0.9.1]
     RCWTK 引擎 Loader | 独立加载器界面 theKing Hub (不用 WindUI) | 免卡密, 加密白名单授权
 
     安全设计 (多层反绕过):
@@ -35,6 +35,7 @@
       v0.8.3: 按 universeId 识别当前游戏 (狙击场游戏厅/对局 PlaceId 不同也能注入)
       v0.8.4: 清单增加地下城战利品者 (dungeon-raiders)
       v0.9.0: 自动注入开关 (writefile 持久化); 下次开 Loader 命中清单则直注, 未适配回退界面
+      v0.9.1: 清单按英文名 A-Z; 加入 Project Aura RNG 发布路由
 
     配置: _G.RCWTK_LOADER_CONFIG 或下方默认值 (发布前改成你自己的 GitHub 仓库)
 ]]
@@ -71,7 +72,7 @@ end
 
 local TheKing = loadstring(readfile("lib/theking.luau"))({
     GameName = "TheKing Loader", -- 窗口 Author 小字
-    ScriptVersion = "0.9.0",
+    ScriptVersion = "0.9.1",
     Headless = true, -- 不加载 WindUI, Loader 自建界面
 })
 
@@ -339,7 +340,7 @@ local function loadManifest()
     local body = fetchFirst(cdnUrls(CONFIG.ManifestPath))
     local m = jsonDecode(body)
     if type(m) == "table" then
-        state.manifest = m
+        state.manifest = sortManifest(m)
     end
     return state.manifest
 end
@@ -462,14 +463,28 @@ local loaderGui = nil
 local ui = {}
 
 local CN_GAME = {
-    ["heroes-rng"] = "（英雄随机生成）Heroes RNG",
-    ["heavy-fishing"] = "（重型钓鱼）heavy fishing",
-    ["sniper-arena"] = "（狙击竞技场）[🔥UPD] Sniper Arena",
-    ["gakuran"] = "(学乱) Gakuran",
-    ["dungeon-quest-reborn"] = "地牢任务重生（Dungeon Quest Reborn）",
     ["clean-the-world"] = "清洁世界（Clean the WORLD!）",
-    ["fisch"] = "Fisch",
+    ["dungeon-quest-reborn"] = "地牢任务重生（Dungeon Quest Reborn）",
     ["dungeon-raiders"] = "地下城战利品者（Dungeon Raiders）",
+    ["fisch"] = "Fisch",
+    ["gakuran"] = "(学乱) Gakuran",
+    ["heavy-fishing"] = "（重型钓鱼）heavy fishing",
+    ["heroes-rng"] = "（英雄随机生成）Heroes RNG",
+    ["project-aura-rng"] = "（项目光环）Project Aura RNG",
+    ["sniper-arena"] = "（狙击竞技场）[🔥UPD] Sniper Arena",
+}
+
+-- 清单排序用英文名 (A-Z, 不区分大小写)
+local EN_SORT = {
+    ["clean-the-world"] = "Clean the WORLD",
+    ["dungeon-quest-reborn"] = "Dungeon Quest Reborn",
+    ["dungeon-raiders"] = "Dungeon Raiders",
+    ["fisch"] = "Fisch",
+    ["gakuran"] = "Gakuran",
+    ["heavy-fishing"] = "Heavy Fishing",
+    ["heroes-rng"] = "Heroes RNG",
+    ["project-aura-rng"] = "Project Aura RNG",
+    ["sniper-arena"] = "Sniper Arena",
 }
 
 local function parentToHui(sg)
@@ -484,6 +499,27 @@ end
 
 local function gameTitle(id)
     return CN_GAME[id] or tostring(id)
+end
+
+local function englishSortKey(id)
+    local s = EN_SORT[id] or tostring(id or "")
+    return string.lower(s)
+end
+
+local function sortManifest(m)
+    if type(m) ~= "table" then
+        return m
+    end
+    table.sort(m, function(a, b)
+        local ia = type(a) == "table" and a.game or a
+        local ib = type(b) == "table" and b.game or b
+        local ka, kb = englishSortKey(ia), englishSortKey(ib)
+        if ka ~= kb then
+            return ka < kb
+        end
+        return tostring(ia) < tostring(ib)
+    end)
+    return m
 end
 
 local function forceExit(title, content)
@@ -1373,6 +1409,9 @@ local function buildUI()
             if c:IsA("TextLabel") or c:IsA("TextButton") then
                 c:Destroy()
             end
+        end
+        if type(entries) == "table" then
+            sortManifest(entries)
         end
         if type(entries) ~= "table" or #entries == 0 then
             local empty = Instance.new("TextLabel")

@@ -121,6 +121,25 @@ def publish_game(game_dir: Path, use_weather: bool, skip_archive: bool = False):
     return manifest_entry
 
 
+# 与 Loader EN_SORT 一致: 清单按英文名 A-Z
+EN_SORT = {
+    "clean-the-world": "Clean the WORLD",
+    "dungeon-quest-reborn": "Dungeon Quest Reborn",
+    "dungeon-raiders": "Dungeon Raiders",
+    "fisch": "Fisch",
+    "gakuran": "Gakuran",
+    "heavy-fishing": "Heavy Fishing",
+    "heroes-rng": "Heroes RNG",
+    "project-aura-rng": "Project Aura RNG",
+    "sniper-arena": "Sniper Arena",
+}
+
+
+def manifest_sort_key(entry: dict):
+    gid = str(entry.get("game") or "")
+    return (EN_SORT.get(gid, gid).lower(), gid)
+
+
 def merge_manifest(entries, out_path: Path):
     existing = {}
     if out_path.exists():
@@ -132,9 +151,12 @@ def merge_manifest(entries, out_path: Path):
         old = existing.get(e["game"], {})
         e["universeId"] = e.get("universeId") or old.get("universeId")
         e["placeId"] = e.get("placeId") or old.get("placeId")
+        if old.get("placeIds") and not e.get("placeIds"):
+            e["placeIds"] = old.get("placeIds")
         existing[e["game"]] = e
-    out_path.write_text(json.dumps(list(existing.values()), ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"[publish] manifest 更新: {out_path}")
+    ordered = sorted(existing.values(), key=manifest_sort_key)
+    out_path.write_text(json.dumps(ordered, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"[publish] manifest 更新: {out_path} ({len(ordered)} 游戏, 英文名 A-Z)")
 
 
 def sync_and_push(skip_class_archive: bool = False):

@@ -1,10 +1,10 @@
 [
   {
-    "game": "heroes-rng",
-    "universeId": 10153098880,
-    "placeId": 108307565942574,
-    "version": "2.0.1",
-    "script": "games/heroes-rng/dist/hub-single-obf.luau"
+    "game": "clean-the-world",
+    "universeId": 10494847029,
+    "placeId": 105767799784652,
+    "version": "1.0.1",
+    "script": "games/clean-the-world/dist/hub-single-obf.luau"
   },
   {
     "game": "dungeon-quest-reborn",
@@ -12,6 +12,18 @@
     "placeId": 85776757589518,
     "version": "1.0.1",
     "script": "games/dungeon-quest-reborn/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "dungeon-raiders",
+    "universeId": 9656201728,
+    "placeId": 132285059959516,
+    "version": "1.30.17",
+    "script": "games/dungeon-raiders/dist/hub-single-obf.luau",
+    "placeIds": [
+      132285059959516,
+      106484206883664,
+      129976314326660
+    ]
   },
   {
     "game": "gakuran",
@@ -28,29 +40,24 @@
     "script": "games/heavy-fishing/dist/hub-single-obf.luau"
   },
   {
+    "game": "heroes-rng",
+    "universeId": 10153098880,
+    "placeId": 108307565942574,
+    "version": "2.0.1",
+    "script": "games/heroes-rng/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "project-aura-rng",
+    "universeId": 9971332199,
+    "placeId": 129619503633658,
+    "version": "0.2.0",
+    "script": "games/project-aura-rng/dist/hub-single-obf.luau"
+  },
+  {
     "game": "sniper-arena",
     "universeId": 9534705677,
     "placeId": 119259569670784,
     "version": "0.4.2",
     "script": "games/sniper-arena/dist/hub-single-obf.luau"
-  },
-  {
-    "game": "clean-the-world",
-    "universeId": 10494847029,
-    "placeId": 105767799784652,
-    "version": "1.0.1",
-    "script": "games/clean-the-world/dist/hub-single-obf.luau"
-  },
-  {
-    "game": "dungeon-raiders",
-    "universeId": 9656201728,
-    "placeId": 132285059959516,
-    "version": "1.30.17",
-    "script": "games/dungeon-raiders/dist/hub-single-obf.luau",
-    "placeIds": [
-      132285059959516,
-      106484206883664,
-      129976314326660
-    ]
   }
 ]
