@@ -7,6 +7,13 @@
     "script": "games/clean-the-world/dist/hub-single-obf.luau"
   },
   {
+    "game": "cultivation-evermortal",
+    "universeId": 10667860714,
+    "placeId": 96179204081384,
+    "version": "0.3.0",
+    "script": "games/cultivation-evermortal/dist/hub-single-obf.luau"
+  },
+  {
     "game": "dungeon-quest-reborn",
     "universeId": 9931749389,
     "placeId": 85776757589518,
