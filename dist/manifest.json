@@ -1,0 +1,56 @@
+[
+  {
+    "game": "heroes-rng",
+    "universeId": 10153098880,
+    "placeId": 108307565942574,
+    "version": "2.0.1",
+    "script": "games/heroes-rng/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "dungeon-quest-reborn",
+    "universeId": 9931749389,
+    "placeId": 85776757589518,
+    "version": "1.0.1",
+    "script": "games/dungeon-quest-reborn/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "gakuran",
+    "universeId": 9199655655,
+    "placeId": 128736949265057,
+    "version": "0.0.1",
+    "script": "games/gakuran/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "heavy-fishing",
+    "universeId": 8342498724,
+    "placeId": 98502499119821,
+    "version": "1.2.8",
+    "script": "games/heavy-fishing/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "sniper-arena",
+    "universeId": 9534705677,
+    "placeId": 119259569670784,
+    "version": "0.4.2",
+    "script": "games/sniper-arena/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "clean-the-world",
+    "universeId": 10494847029,
+    "placeId": 105767799784652,
+    "version": "1.0.1",
+    "script": "games/clean-the-world/dist/hub-single-obf.luau"
+  },
+  {
+    "game": "dungeon-raiders",
+    "universeId": 9656201728,
+    "placeId": 132285059959516,
+    "version": "1.30.17",
+    "script": "games/dungeon-raiders/dist/hub-single-obf.luau",
+    "placeIds": [
+      132285059959516,
+      106484206883664,
+      129976314326660
+    ]
+  }
+]

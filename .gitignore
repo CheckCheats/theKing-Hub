@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 开发注入 / 分块部署临时产物 (tools/_make_deploy_dq.py 等可再生成)
+tools/_tmp_*
+tools/_deploy_*
+tools/_hub_b64.txt
+tools/_dq_chunks/
+tools/_tk_chunks/
+tools/_build_deploy_all.py
+tools/_chunk_deploy.py
+tools/_make_deploy_dq.py
+
+# 构建产物 (python tools/build.py 可再生成)
+games/*/dist/
+
+# 临时 checkout / 会话缓存
+gitee-checkout/
+.omo/
+
+# IDE / 助手本地缓存 (非引擎源码)
+.workbuddy/
+
+# 根目录调试残留 (tmp_*.py / tmp_*.lua)
+tmp_*
+
+# OS
+Thumbs.db
+.DS_Store

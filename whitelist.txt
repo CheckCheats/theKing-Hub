@@ -1,0 +1,10 @@
+# TheKing 白名单 — 一行一个用户; 无日期=永久, 带日期=到期时间(YYYY-MM-DD)
+# 用 tools/whitelist.py 管理 (add/remove/extend/push), 手动编辑后直接 push 亦可
+
+WoSh1N1D1e
+ZoomSilverGalaxy
+top_nn01
+ANGEL_EMOZY
+ANGEL_EMOLOVEZY
+ning2782776171
+ning2782776170

@@ -1,0 +1,43 @@
+---
+description: RCWTK 引擎硬约束 — 寄存器上限、绘制、跨游戏记忆、静态门
+alwaysApply: true
+---
+
+# RCWTK 引擎 (跨游戏)
+
+会话开始除游戏档案外, 扫 `docs/engine-memory.md` 与 `lib/devlog.md` 最后一条。
+
+## 200 局部寄存器
+
+Luau 每个函数最多约 200 个 local。大 hub 业务必须放在 `;(function() ... end)()` 里。相关状态用 `TheKing.Pack` 收成单表, 方法写 `function T.foo()`。禁止在已经很肥的函数里继续平铺 `local function`。
+
+改 `games/*/hub.luau` 或即将注入前执行:
+
+```
+python tools/check_hub.py games/<目录>/hub.luau
+```
+
+峰值 ≥195 视为编不过, 必须先收再跑。细节见 `docs/engine-memory.md`。
+
+## 绘制
+
+新的 2D/3D/ESP 走 `TheKing.Draw` (`docs/draw-api.md`)。禁止 `Drawing.new`。脚底圈用 `Draw.disc`, 不要每帧 Instance.new。
+
+## 从各游戏收回的 API (lib 2.2.0)
+
+新功能用这些, 不要再抄一份地下城 PREF / 裸 Heartbeat 锁移速:
+
+- `OpenPrefs` 滑条/自绘网格落盘 (Rayfield Flag 在钾上常失效)
+- `Hold` / `BindStepped` 属性打回、节奏对齐 (不要用 StartLoop 打 <50ms)
+- `Await` Knit Promise
+- `DeferTick` 循环里会卡住的 Invoke/动画
+- `Upvalue` 必须 pcall
+
+详见 `docs/engine-memory.md` 普查表。
+
+## 质量
+
+- `WaitForChild` 必须带 timeout
+- 循环必须 `StartLoop`/`BindToggle`
+- UI 文案中文; WindUI/Rayfield 参数查 `docs/windui-api.md`
+- 改 lib 写 `lib/devlog.md`
