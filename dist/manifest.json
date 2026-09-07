@@ -33,6 +33,13 @@
     ]
   },
   {
+    "game": "fisch",
+    "universeId": 5750914919,
+    "placeId": 131716211654599,
+    "version": "0.1.2",
+    "script": "games/fisch/dist/hub-single-obf.luau"
+  },
+  {
     "game": "gakuran",
     "universeId": 9199655655,
     "placeId": 128736949265057,
