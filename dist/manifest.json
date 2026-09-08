@@ -24,7 +24,7 @@
     "game": "dungeon-raiders",
     "universeId": 9656201728,
     "placeId": 132285059959516,
-    "version": "1.32.91",
+    "version": "1.3.4",
     "script": "games/dungeon-raiders/dist/hub-single-obf.luau",
     "placeIds": [
       132285059959516,
